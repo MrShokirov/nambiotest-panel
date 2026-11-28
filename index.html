@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>NAM BIOTEST · Panel</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="chart.umd.js"></script>
+<style>
+:root{--bg:#f4f6fa;--card:#fff;--ink:#1d2433;--muted:#6b7385;--line:#e6e9ef;--accent:#1f6feb;--ok:#2ea043;--warn:#d29922;--bad:#cf222e;--chip:#eef3fd}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1420;--card:#171e2c;--ink:#e6eaf2;--muted:#8d97ab;--line:#263045;--chip:#1c2a44}}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:12px 14px 0}
+h1{font-size:17px;margin:0 0 2px}.sub{color:var(--muted);font-size:12px}
+nav{display:flex;gap:6px;overflow-x:auto;padding:10px 0 10px;scrollbar-width:none}nav::-webkit-scrollbar{display:none}
+nav button{flex:0 0 auto;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:18px;padding:7px 13px;font-size:13px}
+nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+main{padding:0 14px 40px}.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin:0 0 12px}
+.card h2{font-size:14px;margin:0 0 8px}.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px}.kpi b{display:block;font-size:17px;margin-top:2px}.kpi span{color:var(--muted);font-size:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+select,input{flex:1;min-width:120px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:8px 10px;font-size:13px}
+.list .it{border-top:1px solid var(--line);padding:9px 0}.list .it:first-child{border-top:0}
+.it .t{font-weight:600}.it .m{color:var(--muted);font-size:12px;margin-top:2px}.it .r{display:flex;justify-content:space-between;gap:8px;margin-top:3px}
+.chip{display:inline-block;background:var(--chip);border-radius:10px;padding:1px 8px;font-size:11px;margin-right:4px}
+.ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}.mut{color:var(--muted)}
+.bar{height:6px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:5px}.bar i{display:block;height:100%;background:var(--accent)}
+.tb{width:100%;border-collapse:collapse;font-size:12px}.tb td{padding:6px 2px;border-top:1px solid var(--line);vertical-align:top}.tb tr:first-child td{border-top:0}.tb td.n{text-align:right;white-space:nowrap}.tb .bar{margin-top:3px}
+.dates{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center}.dates input{min-width:0;width:100%;box-sizing:border-box}.dates span{color:var(--muted)}
+canvas{max-width:100%}.empty{color:var(--muted);text-align:center;padding:24px 0}
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+header{backdrop-filter:saturate(1.6) blur(10px);-webkit-backdrop-filter:saturate(1.6) blur(10px);background:color-mix(in srgb,var(--bg) 82%,transparent)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+#rf{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:50%;width:34px;height:34px;font-size:16px;line-height:1;flex:0 0 auto;transition:transform .5s}
+#rf.spin{transform:rotate(360deg)}
+nav button{transition:background .2s,color .2s,transform .1s}nav button:active{transform:scale(.95)}
+main{padding-bottom:calc(40px + env(safe-area-inset-bottom))}
+.fade{animation:fade .28s ease-out}@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card,.kpi{transition:transform .15s}.it{cursor:pointer}.it .more{display:none;margin-top:6px}.it.open .more{display:block}
+.delta{font-size:11px;font-weight:600;margin-left:4px}.up{color:var(--ok)}.dn{color:var(--bad)}
+.sk{background:linear-gradient(90deg,var(--line) 25%,var(--card) 50%,var(--line) 75%);background-size:200% 100%;animation:sk 1.2s infinite;border-radius:12px;height:64px;margin:0 0 12px}
+@keyframes sk{from{background-position:200% 0}to{background-position:-200% 0}}
+.seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.seg button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:5px 11px;font-size:12px}.seg button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.pr{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;text-align:center;margin:6px 0}.pr div{background:var(--chip);border-radius:8px;padding:5px 2px;font-size:11px}.pr b{display:block;font-size:13px}
+a.lnk{color:var(--accent);text-decoration:none}
+#lock{padding:40px 20px;text-align:center;color:var(--muted)}
+</style>
+</head>
+<body>
+<header><div class="top"><div><h1>NAM BIOTEST · Birja paneli</h1><div class="sub" id="upd">Yuklanmoqda…</div></div><button id="rf" title="Yangilash">🔄</button></div>
+<nav id="tabs"></nav></header>
+<main id="app"><div class="sk"></div><div class="sk"></div><div class="sk" style="height:180px"></div><div class="sk"></div></main>
+<script>
+const tg = window.Telegram && Telegram.WebApp; if (tg) { tg.ready(); tg.expand(); try { tg.enableClosingConfirmation && 0; } catch (e) {} }
+// Telegram mavzusi (yorugʻ/qorongʻi) ranglarini olish
+(() => { const p = tg && tg.themeParams; if (!p || !p.bg_color) return; const r = document.documentElement.style;
+  r.setProperty('--bg', p.secondary_bg_color || p.bg_color); r.setProperty('--card', p.bg_color); r.setProperty('--ink', p.text_color || '');
+  r.setProperty('--muted', p.hint_color || ''); if (p.button_color) r.setProperty('--accent', p.button_color);
+  try { tg.setHeaderColor && tg.setHeaderColor(p.secondary_bg_color || p.bg_color); tg.setBackgroundColor && tg.setBackgroundColor(p.secondary_bg_color || p.bg_color); } catch (e) {} })();
+const haptic = (t = 'sel') => { try { const h = tg && tg.HapticFeedback; if (!h) return; t === 'sel' ? h.selectionChanged() : h.impactOccurred('light'); } catch (e) {} };
+const debounce = (f, ms = 200) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => f(...a), ms); }; };
+const delta = (a, b) => { if (!b) return ''; const p = Math.round((a - b) / b * 100); return `<span class="delta ${p >= 0 ? 'up' : 'dn'}">${p >= 0 ? '▲' : '▼'} ${Math.abs(p)}%</span>`; };
+const $ = s => document.querySelector(s), app = $('#app');
+const nf = n => Math.round(Number(n) || 0).toLocaleString('ru-RU').replace(/ /g, ' ');
+const big = n => { n = Number(n) || 0; return n >= 1e9 ? (n / 1e9).toFixed(2).replace('.', ',') + ' mlrd' : n >= 1e6 ? (n / 1e6).toFixed(1).replace('.', ',') + ' mln' : nf(n); };
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const fd = s => { if (!s) return '—'; const d = new Date(s); return isNaN(d) ? '—' : `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`; };
+const fdt = s => { if (!s) return '—'; const d = new Date(s); if (isNaN(d)) return '—'; const t = d.getHours() || d.getMinutes() ? ` ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}` : ''; return fd(s) + t; };
+const ST = { new: ['🆕', 'Toʻlov kutilmoqda'], paid: ['🚚', 'Yetkazish kutilmoqda'], delivered: ['✅', 'Yetkazildi'], terminated: ['❌', 'Bekor'] };
+let D = null, charts = [];
+const COLORS = ['#1f6feb', '#2ea043', '#d29922', '#cf222e', '#8250df', '#1b7c83', '#bf3989', '#6e7781', '#fb8f44', '#57ab5a'];
+
+function b64(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return Uint8Array.from(atob(s), c => c.charCodeAt(0)); }
+async function decrypt(txt, keyB64) {
+  const raw = b64(txt.trim()), iv = raw.slice(0, 12), data = raw.slice(12);
+  const key = await crypto.subtle.importKey('raw', b64(keyB64), 'AES-GCM', false, ['decrypt']);
+  let buf = new Uint8Array(await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data));
+  if (buf[0] === 0x1f && buf[1] === 0x8b && 'DecompressionStream' in window) buf = new Uint8Array(await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
+  return JSON.parse(new TextDecoder().decode(buf));
+}
+async function load() {
+  const q = new URLSearchParams(location.search), h = new URLSearchParams(location.hash.slice(1));
+  let k = q.get('k') || h.get('k'); try { if (k) localStorage.setItem('nbk', k); else k = localStorage.getItem('nbk'); } catch (e) {}
+  if (!k) { app.innerHTML = '<div id="lock">🔐 Kalit topilmadi. Panelni botdagi «📱 Panel» tugmasi orqali oching.</div>'; return; }
+  const parts = location.pathname.split('/').filter(Boolean), owner = location.hostname.split('.')[0], repo = parts[0] || 'nambiotest-panel';
+  const urls = [`https://raw.githubusercontent.com/${owner}/${repo}/main/data.bin?t=${Date.now()}`, `data.bin?t=${Date.now()}`];
+  for (const u of urls) { try { const r = await fetch(u, { cache: 'no-store' }); if (r.ok) { D = await decrypt(await r.text(), k); break; } } catch (e) {} }
+  if (!D) { app.innerHTML = '<div id="lock">⚠️ Maʼlumotni ochib boʻlmadi. Botdan panelni qayta oching.</div>'; return; }
+  $('#upd').textContent = 'Yangilangan: ' + new Date(D.t).toLocaleString('ru-RU').slice(0, 17) + (D.ver ? ' · v' + D.ver : '');
+  try { const c = localStorage.getItem('nbtab'); if (c && TABS.some(t => t[0] === c)) cur = c; } catch (e) {}
+  tabs();
+}
+const TABS = [['home', '🏠 Umumiy'], ['rep', '📊 Hisobot'], ['deals', '📑 Shartnomalar'], ['watch', '🕵️ Kuzatuv'], ['price', '📈 Narxlar'], ['cust', '🏥 Mijozlar'], ['market', '🛒 Bozor'], ['fc', '🔮 Bashorat'], ['fin', '💰 Moliya']];
+let cur = 'home';
+function tabs() {
+  $('#tabs').innerHTML = TABS.map(([k, n]) => `<button data-k="${k}" class="${k === cur ? 'on' : ''}">${n}</button>`).join('');
+  $('#tabs').querySelectorAll('button').forEach(b => b.onclick = () => { if (cur === b.dataset.k) return; cur = b.dataset.k; haptic(); try { localStorage.setItem('nbtab', cur); } catch (e) {} tabs(); });
+  const on = $('#tabs').querySelector('.on'); on && on.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+  charts.forEach(c => c.destroy()); charts = [];
+  app.classList.remove('fade'); void app.offsetWidth; app.classList.add('fade');
+  ({ home, rep, deals, watch, price, cust, market, fc, fin })[cur]();
+  window.scrollTo({ top: 0 });
+}
+function chart(id, cfg) { const el = document.getElementById(id); if (!el || !window.Chart) return; const ink = getComputedStyle(document.documentElement).getPropertyValue('--muted');
+  Chart.defaults.color = ink.trim() || '#6b7385'; charts.push(new Chart(el, cfg)); }
+
+function home() {
+  const k = D.kpi;
+  app.innerHTML = `<div class="kpis">
+    <div class="kpi"><span>Shu oy savdo</span><b>${big(k.month)}${D.prev ? delta(k.month, D.prev.sameDays) : ''}</b><span>${k.monthN} ta · oʻtgan oy ${D.prev ? big(D.prev.month) : '—'}</span></div>
+    <div class="kpi"><span>Yil boshidan</span><b>${big(k.year)}</b><span>${k.yearN} ta</span></div>
+    <div class="kpi"><span>Kutilayotgan tushum</span><b>${big(k.unpaid + k.held)}</b><span>toʻlanmagan + birjada</span></div>
+    <div class="kpi"><span>Muddati oʻtgan</span><b class="${k.late ? 'bad' : 'ok'}">${k.late} ta</b><span>yetkazish</span></div>
+    <div class="kpi"><span>Takliflar (oy)</span><b>${k.won} / ${k.lost}</b><span>yutildi / boy berildi</span></div>
+    <div class="kpi"><span>Boy berilgan (oy)</span><b class="warn">${big(k.missed)}</b><span>${k.missedN} ta lot</span></div></div>
+    <div class="card"><h2>Oylik savdo</h2><canvas id="c1" height="190"></canvas></div>
+    <div class="card"><h2>Mahsulot guruhlari (90 kun)</h2><canvas id="c2" height="220"></canvas></div>
+    <div class="card"><h2>Hududlar (90 kun)</h2><canvas id="c3" height="${40 + D.regions.length * 26}"></canvas></div>`;
+  chart('c1', { type: 'bar', data: { labels: D.months.map(m => m[0]), datasets: [{ data: D.months.map(m => m[1]), backgroundColor: '#1f6feb', borderRadius: 5 }] },
+    options: { plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => nf(c.raw) + " so'm" } } }, scales: { y: { ticks: { callback: v => big(v) } } } } });
+  chart('c2', { type: 'doughnut', data: { labels: D.groups.map(g => g[0]), datasets: [{ data: D.groups.map(g => g[1]), backgroundColor: COLORS }] }, options: { plugins: { legend: { position: 'bottom' } } } });
+  chart('c3', { type: 'bar', data: { labels: D.regions.map(r => r[0]), datasets: [{ data: D.regions.map(r => r[1]), backgroundColor: '#2ea043', borderRadius: 4 }] },
+    options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { ticks: { callback: v => big(v) } } } } });
+}
+
+// ---------- 📊 Ixtiyoriy davr hisoboti
+const p2 = n => String(n).padStart(2, '0'), isoD = d => `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}`;
+const addD = (s, n) => { const d = new Date(s + 'T00:00:00'); d.setDate(d.getDate() + n); return isoD(d); };
+const addM = (s, n) => { const d = new Date(s + 'T00:00:00'), day = d.getDate(); d.setDate(1); d.setMonth(d.getMonth() + n); d.setDate(Math.min(day, new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate())); return isoD(d); };
+function presetRange(k) { const n = new Date(), y = n.getFullYear(), m = n.getMonth(), T = isoD(n);
+  if (k === 'm') return [isoD(new Date(y, m, 1)), T]; if (k === 'pm') return [isoD(new Date(y, m - 1, 1)), isoD(new Date(y, m, 0))];
+  if (k === 'q') return [isoD(new Date(y, Math.floor(m / 3) * 3, 1)), T]; if (k === 'y') return [`${y}-01-01`, T]; if (k === 'py') return [`${y - 1}-01-01`, `${y - 1}-12-31`];
+  if (k === 'd30') return [addD(T, -29), T]; if (k === 'd90') return [addD(T, -89), T]; return [(D.sales || []).reduce((a, r) => r[0] < a ? r[0] : a, T), T]; }
+function prevOf(f, t) { // oy boshidan → oldingi oylar; aks holda teng uzunlikdagi oldingi davr
+  const ff = new Date(f + 'T00:00:00'), tt = new Date(t + 'T00:00:00');
+  if (ff.getDate() === 1) { const n = (tt.getFullYear() - ff.getFullYear()) * 12 + tt.getMonth() - ff.getMonth() + 1; return [addM(f, -n), addM(t, -n)]; }
+  const len = Math.round((tt - ff) / 864e5) + 1; return [addD(f, -len), addD(f, -1)]; }
+function rep() {
+  const S = D.sales || [], GL = D.gl || {}, CN = D.cnames || {};
+  if (!S.length) { app.innerHTML = '<div class="card empty">Hisobot maʼlumoti agent v4.9 ga yangilangach paydo boʻladi.</div>'; return; }
+  let st = null; try { st = JSON.parse(localStorage.getItem('nbrep') || 'null'); } catch (e) {}
+  if (!st || !st.f) { const [f, t] = presetRange('m'); st = { f, t, g: '', k: 'm' }; }
+  const P = { m: 'Shu oy', pm: 'Oʻtgan oy', q: 'Chorak', y: 'Yil', py: 'Oʻtgan yil', d30: '30 kun', d90: '90 kun', all: 'Hammasi' };
+  const groups = [...new Set(S.map(r => r[3]))].sort((a, b) => (GL[a] || 'zz').localeCompare(GL[b] || 'zz'));
+  app.innerHTML = `<div class="card"><div class="seg" id="rseg">${Object.entries(P).map(([k, v]) => `<button data-k="${k}" class="${st.k === k ? 'on' : ''}">${v}</button>`).join('')}</div>
+    <div class="dates"><input type="date" id="rdf" value="${st.f}"><span>—</span><input type="date" id="rdt" value="${st.t}"></div>
+    <div class="row" style="margin:8px 0 0"><select id="rg"><option value="">🧪 Barcha mahsulotlar</option>${groups.map(g => `<option value="${esc(g)}" ${g === st.g ? 'selected' : ''}>${esc(GL[g] || 'Boshqalar')}</option>`).join('')}</select></div>
+    <div class="sub" id="rcmp" style="margin-top:6px"></div></div><div id="rb"></div>`;
+  const draw = () => {
+    try { localStorage.setItem('nbrep', JSON.stringify(st)); } catch (e) {}
+    charts.forEach(c => c.destroy()); charts = [];
+    const { f, t, g } = st, [pf, pt] = prevOf(f, t), [yf, yt] = [addM(f, -12), addM(t, -12)];
+    const sel = (a, b) => S.filter(r => r[0] >= a && r[0] <= b && (!g || r[3] === g));
+    const cur = sel(f, t), prv = sel(pf, pt), yoy = sel(yf, yt);
+    const sm = a => a.reduce((s, r) => s + r[1], 0), qt = a => a.reduce((s, r) => s + r[2], 0);
+    const first = {}; for (const r of S) if (!first[r[5]] || r[0] < first[r[5]]) first[r[5]] = r[0];
+    const cs = new Set(cur.map(r => r[5])), pcs = new Set(prv.map(r => r[5])), nw = [...cs].filter(k => first[k] >= f && first[k] <= t).length;
+    const mkS = (a, b) => { let T = 0, O = 0; for (const r of D.mk || []) if (r[0] >= a && r[0] <= b && (!g || r[1] === g)) { T += r[2]; if (r[3]) O += r[2]; } return [T, O]; };
+    const [mT, mO] = mkS(f, t), [pT, pO] = mkS(pf, pt);
+    $('#rcmp').textContent = `Taqqoslash: ${fd(pf)} – ${fd(pt)}`;
+    const s1 = sm(cur), s0 = sm(prv), q1 = qt(cur), q0 = qt(prv);
+    const grp = (a, i) => { const o = {}; for (const r of a) { const x = o[r[i]] = o[r[i]] || [0, 0, 0]; x[0] += r[1]; x[1] += r[2]; x[2]++; } return o; };
+    const table = (i, name, n) => { const o = grp(cur, i), po = grp(prv, i), arr = Object.entries(o).sort((a, b) => b[1][0] - a[1][0]).slice(0, n), mx = arr.length ? arr[0][1][0] : 1;
+      return arr.length ? `<table class="tb">${arr.map(([k, v]) => `<tr><td>${esc(name(k))}<div class="bar"><i style="width:${Math.max(2, v[0] / mx * 100)}%"></i></div></td>
+        <td class="n"><b>${big(v[0])}</b><br><span class="mut">${Math.round(v[0] / (s1 || 1) * 100)}% · ${v[2]} ta</span> ${delta(v[0], (po[k] || [0])[0])}</td></tr>`).join('')}</table>` : '<div class="empty">Yoʻq</div>'; };
+    const span = Math.round((new Date(t) - new Date(f)) / 864e5) + 1, daily = span <= 62;
+    const keys = []; if (daily) for (let d = f; d <= t; d = addD(d, 1)) keys.push(d); else for (let d = f.slice(0, 7); d <= t.slice(0, 7); d = addM(d + '-01', 1).slice(0, 7)) keys.push(d);
+    const byK = Object.fromEntries(keys.map(k => [k, 0])); for (const r of cur) { const k = daily ? r[0] : r[0].slice(0, 7); if (k in byK) byK[k] += r[1]; }
+    $('#rb').innerHTML = `<div class="kpis fade">
+      <div class="kpi"><span>Savdo</span><b>${big(s1)} ${delta(s1, s0)}</b><span>oldin ${big(s0)}</span></div>
+      <div class="kpi"><span>Shartnomalar</span><b>${cur.length} ${delta(cur.length, prv.length)}</b><span>oldin ${prv.length} · oʻrtacha ${big(cur.length ? s1 / cur.length : 0)}</span></div>
+      <div class="kpi"><span>Dona</span><b>${nf(q1)} ${delta(q1, q0)}</b><span>${g && q1 ? 'oʻrtacha narx ' + nf(s1 / q1) + (q0 ? ' (oldin ' + nf(s0 / q0) + ')' : '') : 'oldin ' + nf(q0)}</span></div>
+      <div class="kpi"><span>Mijozlar</span><b>${cs.size} ${delta(cs.size, pcs.size)}</b><span>yangi: ${nw}</span></div>
+      <div class="kpi"><span>Bozor ulushi (farma)</span><b>${mT ? Math.round(mO / mT * 100) + '%' : '—'}</b><span>${pT ? 'oldin ' + Math.round(pO / pT * 100) + '% · ' : ''}bozor ${big(mT)}</span></div>
+      <div class="kpi"><span>Oʻtgan yil shu davr</span><b>${big(sm(yoy))} ${delta(s1, sm(yoy))}</b><span>${fd(yf)} – ${fd(yt)}</span></div></div>
+      <div class="card"><h2>${daily ? 'Kunlik' : 'Oylik'} savdo</h2><canvas id="rc" height="180"></canvas></div>
+      ${g ? '' : `<div class="card"><h2>🧪 Mahsulot guruhlari</h2>${table(3, k => GL[k] || 'Boshqalar', 15)}</div>`}
+      <div class="card"><h2>🏆 Mahsulotlar</h2>${table(6, k => k, 10)}</div>
+      <div class="card"><h2>🗺 Hududlar</h2>${table(4, k => k, 14)}</div>
+      <div class="card"><h2>🏥 Top mijozlar</h2>${table(5, k => CN[k] || k, 12)}</div>`;
+    chart('rc', { type: 'bar', data: { labels: keys.map(k => daily ? k.slice(8) + '.' + k.slice(5, 7) : k.slice(5) + '.' + k.slice(2, 4)), datasets: [{ data: keys.map(k => byK[k]), backgroundColor: '#1f6feb', borderRadius: 4 }] },
+      options: { plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => nf(c.raw) + " so'm" } } }, scales: { y: { ticks: { callback: v => big(v) } } } } });
+  };
+  $('#rseg').querySelectorAll('button').forEach(b => b.onclick = () => { haptic(); const [f, t] = presetRange(b.dataset.k); st = { ...st, f, t, k: b.dataset.k };
+    $('#rdf').value = f; $('#rdt').value = t; $('#rseg').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); draw(); });
+  const onDate = () => { let f = $('#rdf').value, t = $('#rdt').value; if (!f || !t) return; if (f > t) [f, t] = [t, f]; st = { ...st, f, t, k: '' }; $('#rseg').querySelectorAll('button').forEach(x => x.classList.remove('on')); draw(); };
+  $('#rdf').onchange = onDate; $('#rdt').onchange = onDate; $('#rg').onchange = () => { haptic(); st = { ...st, g: $('#rg').value }; draw(); };
+  draw();
+}
+
+function deals() {
+  const regs = [...new Set(D.deals.map(r => r[5]))].sort(), grs = [...new Set(D.deals.map(r => r[7]).filter(Boolean))].sort();
+  app.innerHTML = `<div class="card"><div class="row">
+    <select id="fs"><option value="">Barcha holatlar</option><option value="act" selected>Faol (toʻlov/yetkazish)</option>${Object.entries(ST).map(([k, v]) => `<option value="${k}">${v[0]} ${v[1]}</option>`).join('')}<option value="late">🔴 Muddati oʻtgan</option></select>
+    <select id="fr"><option value="">Barcha hududlar</option>${regs.map(r => `<option>${esc(r)}</option>`).join('')}</select></div>
+    <div class="row"><select id="fg"><option value="">Barcha mahsulotlar</option>${grs.map(r => `<option>${esc(r)}</option>`).join('')}</select>
+    <input id="fq" placeholder="Qidiruv: mijoz, №, mahsulot"></div><div class="sub" id="fsum"></div></div><div class="card list" id="dl"></div>`;
+  const draw = () => {
+    const s = $('#fs').value, rg = $('#fr').value, g = $('#fg').value, q = $('#fq').value.toLowerCase(), now = Date.now();
+    const v = D.deals.filter(r => (!s || (s === 'act' ? (r[2] === 'new' || r[2] === 'paid') : s === 'late' ? (r[2] === 'paid' && r[10] && new Date(r[10]) < now) : r[2] === s))
+      && (!rg || r[5] === rg) && (!g || r[7] === g) && (!q || (r[0] + ' ' + r[3] + ' ' + r[6]).toLowerCase().includes(q)));
+    $('#fsum').textContent = `${v.length} ta · ${nf(v.reduce((a, r) => a + (r[2] === 'terminated' ? 0 : r[9]), 0))} soʻm`;
+    $('#dl').innerHTML = v.slice(0, 200).map(r => { const late = r[2] === 'paid' && r[10] && new Date(r[10]) < now;
+      return `<div class="it" onclick="this.classList.toggle('open')"><div class="r"><span class="t">№${r[0]} · ${esc(r[3])}</span><span>${ST[r[2]][0]}</span></div>
+      <div class="m">${esc(r[6])} · ${nf(r[8])} dona · <b>${nf(r[9])}</b> soʻm</div>
+      <div class="m">📍 ${esc(r[5])} · ${fd(r[1])}${(r[2] === 'new' || r[2] === 'paid') ? ` · ⏰ <span class="${late ? 'bad' : ''}">${fd(r[10])}</span>` : ''}</div>
+      ${(r[2] === 'new' || r[2] === 'paid') ? `<div class="m">${r[11] === 2 ? `<span class="ok">📝 ishonchnoma bor — ${fdt(r[15])}</span>` : r[11] === 1 ? '<span class="bad">📝 ishonchnoma rad</span>' : '📝 ishonchnoma ⏳'} · 🧾 ${esc(r[12] || 'faktura yoʻq')}${r[13] ? ' · 👤 ' + esc(r[13]) : ''}${r[14] ? ' · 🚚 joʻnatildi' : ''}</div>` : ''}<div class="more m">${ST[r[2]][1]} · STIR ${esc(r[4] || '—')} · <a class="lnk" href="https://farma.uzex.uz/cabinet/provider/deals" target="_blank">kabinetda ochish ↗</a></div></div>`; }).join('') || '<div class="empty">Topilmadi</div>';
+  };
+  ['fs', 'fr', 'fg'].forEach(i => $('#' + i).onchange = draw); $('#fq').oninput = debounce(draw); draw();
+}
+
+function watch() {
+  const W = D.watch || [];
+  if (!W.length) { app.innerHTML = '<div class="card empty">Kuzatuv maʼlumoti hali yoʻq — agent yangilangach paydo boʻladi.</div>'; return; }
+  const K = { '': 'Hammasi', deal: '🕵️ Bitimlar', direct: '🤝 Toʻgʻridan-toʻgʻri', tender: '🌐 Eʼlonlar', plan: '📅 Rejalar', reg: '📜 Reyestr', comp: '⚔️ Raqobatchi' };
+  let f = '';
+  app.innerHTML = `<div class="card"><div class="seg" id="wseg">${Object.entries(K).map(([k, v]) => `<button data-k="${k}" class="${k === f ? 'on' : ''}">${v}</button>`).join('')}</div>
+    <input id="wq" placeholder="Qidiruv: mahsulot, buyurtmachi, sotuvchi, viloyat"><div class="sub" id="wsum" style="margin-top:6px"></div></div><div class="card list" id="wl"></div>`;
+  const draw = () => { const q = $('#wq').value.toLowerCase();
+    const v = W.filter(x => (!f || (f === 'comp' ? x[6] === 'raqobatchi' : x[0] === f)) && (!q || (x[2] + ' ' + x[3] + ' ' + x[4] + ' ' + x[5]).toLowerCase().includes(q)));
+    $('#wsum').textContent = `${v.length} ta · ${big(v.reduce((a, x) => a + (x[7] || 0), 0))} soʻm`;
+    const ic = { deal: '🕵️', direct: '🤝', tender: '🌐', result: '🏁', news: '🏛', plan: '📅', reg: '📜' };
+    $('#wl').innerHTML = v.slice(0, 200).map(x => `<div class="it" onclick="this.classList.toggle('open')"><div class="r"><span class="t">${ic[x[0]] || '•'} ${esc(x[2])}</span><span class="mut">${fd(x[1])}</span></div>
+      ${x[3] ? `<div class="m">🏥 ${esc(x[3])}${x[4] ? ' · ' + esc(x[4]) : ''}</div>` : ''}
+      ${x[5] ? `<div class="m">🏪 ${esc(x[5])} ${x[6] === 'biz' ? '<span class="ok">✅ biz</span>' : x[6] ? '<span class="bad">⚔️</span>' : ''}</div>` : ''}
+      <div class="m">${x[7] ? '<b>' + nf(x[7]) + '</b> soʻm' : ''}${x[8] ? ' · ' + nf(x[8]) + ' dona' : ''}</div>
+      <div class="more m">${esc(x[11])}${x[9] ? ' · № ' + esc(x[9]) : ''}${x[10] ? ` · <a class="lnk" href="${esc(x[10])}" target="_blank">saytda ochish ↗</a>` : ''}</div></div>`).join('') || '<div class="empty">Topilmadi</div>'; };
+  $('#wseg').querySelectorAll('button').forEach(b => b.onclick = () => { f = b.dataset.k; haptic(); $('#wseg').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); draw(); });
+  $('#wq').oninput = debounce(draw); draw();
+}
+
+function price() {
+  const P = D.prices || [];
+  if (!P.length) { app.innerHTML = '<div class="card empty">Narx maʼlumoti hali yoʻq.</div>'; return; }
+  app.innerHTML = `<div class="card"><select id="pg">${P.map((p, i) => `<option value="${i}">${esc(p[0])} — ${p[1]} ta savdo</option>`).join('')}</select></div><div id="pb"></div>`;
+  const draw = () => { const p = P[+$('#pg').value]; charts.forEach(c => c.destroy()); charts = [];
+    $('#pb').innerHTML = `<div class="card fade"><h2>${esc(p[0])} · oxirgi 90 kun yutgan narxlar</h2>
+      <div class="pr"><div>min<b>${nf(p[2])}</b></div><div>25%<b>${nf(p[3])}</b></div><div>median<b>${nf(p[4])}</b></div><div>max<b>${nf(p[5])}</b></div></div>
+      <div class="m">${p[6] ? `🟢 Biz: median <b>${nf(p[6])}</b> (${p[7]} ta yutuq)` : '🟢 Bu guruhda yutugʻimiz yoʻq'} · 🎯 tavsiya ~<b>${nf(p[4] * 0.98)}</b></div></div>
+      <div class="card"><h2>Median narx (6 oy)</h2><canvas id="pc" height="180"></canvas></div>
+      <div class="card list"><h2>⚔️ Asosiy raqobatchilar</h2>${p[8].map(t => `<div class="it"><div class="r"><span class="t">${esc(t[0])}</span><span>${nf(t[2])}</span></div><div class="m">${t[1]} ta yutuq · median narx</div></div>`).join('') || '<div class="empty">Yoʻq</div>'}</div>`;
+    chart('pc', { type: 'line', data: { labels: p[9].map(m => m[0]), datasets: [{ data: p[9].map(m => m[1]), borderColor: '#1f6feb', backgroundColor: 'rgba(31,111,235,.12)', fill: true, tension: .35, spanGaps: true, pointRadius: 3 }] },
+      options: { plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => nf(c.raw) + " so'm" } } }, scales: { y: { ticks: { callback: v => nf(v) } } } } });
+  };
+  $('#pg').onchange = () => { haptic(); draw(); }; draw();
+}
+
+function cust() {
+  app.innerHTML = `<div class="card"><input id="cq" placeholder="Mijoz, STIR yoki kontakt qidirish"></div><div class="card list" id="cl"></div>`;
+  const draw = () => { const q = $('#cq').value.toLowerCase();
+    $('#cl').innerHTML = D.customers.filter(c => !q || c.n.toLowerCase().includes(q) || c.tin.includes(q)).slice(0, 150).map(c => `<div class="it">
+      <div class="t">${esc(c.n)}</div><div class="m">STIR ${esc(c.tin)} · ${esc(c.rg || '')} ${c.ms ? '· 👤 ' + esc(c.ms) : ''}</div>
+      <div class="m">${c.k} ta shartnoma · <b>${big(c.s)}</b> soʻm · oxirgi ${fd(c.last)}${c.act ? ` · <span class="ok">faol ${c.act}</span>` : ''}</div>
+      ${(c.ct || []).map(x => `<div class="m">📞 ${x[0] ? '<b>' + esc(x[0]) + '</b>' : ''}${x[1] ? ' (' + esc(x[1]) + ')' : ''}${x[2] ? ' — ' + x[2].split(/,\s*/).map(ph => `<a class="lnk" href="tel:${esc(ph.replace(/[^\d+]/g, ''))}">${esc(ph)}</a>`).join(', ') : ''}</div>`).join('')}
+      ${c.notes.map(n => `<div class="m">🗒 ${fd(n[0])} · ${esc(n[1])}: ${esc(n[2])}</div>`).join('')}
+      ${c.rem.map(r => `<div class="m warn">⏰ ${fd(r[0])}: ${esc(r[1])}</div>`).join('')}</div>`).join('') || '<div class="empty">Topilmadi</div>'; };
+  $('#cq').oninput = debounce(draw); draw();
+}
+
+function market() {
+  const c = D.catalog;
+  app.innerHTML = `<div class="card"><h2>Bozor ulushi (90 kun, ekspress-testlar)</h2><canvas id="m1" height="230"></canvas></div>
+    <div class="card list"><h2>Katalog: narx reytingi</h2>${c.groups.map(g => `<div class="it"><div class="r"><span class="t">${esc(g[0])}</span><span>${g[2] ? `<b>${g[2]}</b>/${g[3]}-oʻrin` : '<span class="mut">eʼlonimiz yoʻq</span>'}</span></div>
+      <div class="m">🟢 biz: ${g[1] ? nf(g[1]) : '—'} · ⚔️ eng arzon: ${g[4] ? nf(g[4]) + ' (' + esc(g[5]) + ')' : '—'}</div>
+      <div class="m">raqobatchi eʼlonlari ${g[6]} · diler ${g[7]} · raqobatchilar 7 kunda ~${nf(g[8])} dona sotdi</div></div>`).join('') || '<div class="empty">Hali yuklanmagan</div>'}</div>
+    <div class="card list"><h2>🤝 Diler eʼlonlari (bizning Pharm ID)</h2>${c.dealers.map(o => `<div class="it"><div class="t ${o[5] ? 'bad' : ''}">${o[5] ? '⚠️ ' : ''}${esc(o[0])}</div>
+      <div class="m"><b>${nf(o[1])}</b> soʻm${o[4] ? ' (prays ' + nf(o[4]) + ')' : ''} · qoldiq ${nf(o[2])}/${nf(o[3])} · eʼlon ${esc(o[6])}</div></div>`).join('') || '<div class="empty">Yoʻq</div>'}</div>
+    <div class="card list"><h2>📢 Bizning eʼlonlar qoldigʻi</h2>${D.offers.map(o => `<div class="it"><div class="r"><span class="t">${esc(o[0])}</span><span>${o[5]}</span></div>
+      <div class="bar"><i style="width:${o[2] ? Math.min(100, o[1] / o[2] * 100) : 0}%"></i></div><div class="m">${nf(o[1])} / ${nf(o[2])} · ${nf(o[3])} soʻm · ${fd(o[4])} gacha</div></div>`).join('') || '<div class="empty">Yoʻq</div>'}</div>
+    <div class="card list"><h2>📉 Boy berilgan lotlar (30 kun)</h2>${D.missed.map(m => `<div class="it"><div class="t">${m[7] ? '🥈' : '🙈'} ${esc(m[2])}</div>
+      <div class="m">🏆 ${esc(m[3])} · ${nf(m[4])} × ${nf(m[5])} = <b>${big(m[6])}</b> · ${fd(m[0])}</div></div>`).join('') || '<div class="empty">Yoʻq</div>'}</div>`;
+  chart('m1', { type: 'doughnut', data: { labels: D.share.map(s => s[0]), datasets: [{ data: D.share.map(s => s[1]), backgroundColor: COLORS }] }, options: { plugins: { legend: { position: 'bottom' } } } });
+}
+
+function fc() {
+  app.innerHTML = `<div class="card"><h2>🏭 Keyingi oy ishlab chiqarish (dona)</h2><canvas id="f1" height="230"></canvas></div>
+    <div class="card list"><h2>🔮 Takroriy xarid kutilmoqda (3 hafta)</h2>${D.forecast.map(f => `<div class="it"><div class="r"><span class="t">${fd(f[0])}</span><span class="${f[1] < 0 ? 'bad' : f[1] <= 5 ? 'warn' : 'mut'}">${f[1] >= 0 ? f[1] + ' kun' : Math.abs(f[1]) + ' kun oʻtdi'}</span></div>
+      <div class="m">🏥 ${esc(f[2])} · ${esc(f[3])}</div><div class="m">🧪 ${esc(f[4])} · ~${nf(f[5])} dona · har ${f[6]} kunda · oxirgi: ${f[7] === 'NAM BIOTEST' ? '<span class="ok">biz</span>' : '⚔️ ' + esc(f[7])} · ${esc(f[8])}</div></div>`).join('') || '<div class="empty">Hozircha yoʻq</div>'}</div>`;
+  chart('f1', { type: 'bar', data: { labels: D.prod.map(p => p[0]), datasets: [{ label: 'Oxirgi oy', data: D.prod.map(p => p[3]), backgroundColor: '#9db7e8' }, { label: 'Prognoz', data: D.prod.map(p => p[4]), backgroundColor: '#1f6feb' }, { label: 'Tavsiya', data: D.prod.map(p => p[5]), backgroundColor: '#2ea043' }] },
+    options: { plugins: { legend: { position: 'bottom' } } } });
+}
+
+function fin() {
+  const f = D.fin;
+  app.innerHTML = `<div class="kpis">
+    <div class="kpi"><span>🏦 Hisob raqam</span><b>${f.bal != null ? big(f.bal) : '—'}</b><span>${f.balT ? fd(f.balT) : '/balans bilan kiriting'}</span></div>
+    <div class="kpi"><span>🆕 Mijoz toʻlamagan</span><b>${big(f.unpaid)}</b><span>${f.unpaidN} ta</span></div>
+    <div class="kpi"><span>🔒 Birjada</span><b>${big(f.held)}</b><span>${f.heldN} ta · yetkazilgach</span></div>
+    <div class="kpi"><span>🧷 Garovda</span><b>${big(f.pledge)}</b><span>3%</span></div>
+    <div class="kpi"><span>🔴 Muddati oʻtgan</span><b class="bad">${big(f.late)}</b><span>${f.lateN} ta</span></div>
+    <div class="kpi"><span>💸 Komissiya (oy)</span><b>${big(f.com)}</b><span>birja</span></div></div>
+    <div class="card"><h2>Pul tarkibi</h2><canvas id="p1" height="220"></canvas></div>
+    <div class="card list"><h2>⏰ Eslatmalar</h2>${D.reminders.map(r => `<div class="it"><div class="t">${fd(r[0])} · ${esc(r[1])}</div><div class="m">${esc(r[2])} · ${esc(r[3])}</div></div>`).join('') || '<div class="empty">Yoʻq</div>'}</div>`;
+  chart('p1', { type: 'doughnut', data: { labels: ['Toʻlanmagan', 'Birjada', 'Garovda'], datasets: [{ data: [f.unpaid, f.held, f.pledge], backgroundColor: ['#d29922', '#1f6feb', '#8250df'] }] }, options: { plugins: { legend: { position: 'bottom' } } } });
+}
+$('#rf').onclick = async () => { haptic('imp'); $('#rf').classList.add('spin'); D = null; await load(); setTimeout(() => $('#rf').classList.remove('spin'), 500); };
+load();
+</script>
+</body>
+</html>
